@@ -7,10 +7,14 @@
 #
 ###############################################################################################################################
 
+#Alias's are 140 lines down.
+
+
 sysType=$(uname -n)
 
 # Enable colors and change prompt:
 autoload -U colors && colors	# Load colors
+#PS1="%B%{$fg[green]%}%n%{$fg[green]%}@%{$fg[green]%}%M$fg[white]:%{$fg[blue]%}%~%{$reset_color%}$%b "
 
 if [ "$sysType" != "archbox" ]; then
     export PS1Color="red"
@@ -21,6 +25,11 @@ fi
 PROMPT="%B%F{green}%n%f%b%B%F{$PS1Color}@%f%b%B%F{$PS1Color}%M%f%b%B%F{white}:%f%b%B%F{blue}%~%f%b%B$%b%B %b"
 
 
+
+# PS1="%B%{$fg[red]%}[%{$fg[yellow]%}%n%{$fg[green]%}@%{$fg[blue]%}%M %{$fg[magenta]%}%~%{$fg[red]%}]%{$reset_color%}$%b "
+# PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+# PS1="%B%{$fg[red]%}[%{$fg[green]%}%n%{$fg[green]%}@%{$fg[green]%}%M:%{$fg[blue]%}%~%{$fg[red]%}]%{$reset_color%}$%b "
+# PS1="%B%{$fg[red]%} [%{$fg[green]%}%n%{$fg[green]%}@%{$fg[green]%}%M$fg[white]:%{$fg[blue]%}%~%{$fg[red]%}] %{$reset_color%}$%b "
 setopt autocd		# Automatically cd into typed directory.
 stty stop undef		# Disable ctrl-s to freeze terminal.
 setopt interactive_comments
@@ -32,7 +41,7 @@ HISTFILE=~/.config/zsh/history
 
 # Load aliases and shortcuts if existent.
 [ -f "${XDG_CONFIG_HOME:-$HOME/.config}/shell/shortcutrc" ] && source "${XDG_CONFIG_HOME:-$HOME/.config}/shell/shortcutrc"
-[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc" ] && source "${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc"
+# [ -f "${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc" ] && source "${XDG_CONFIG_HOME:-$HOME/.config}/shell/aliasrc"
 [ -f "${XDG_CONFIG_HOME:-$HOME/.config}/shell/zshnameddirrc" ] && source "${XDG_CONFIG_HOME:-$HOME/.config}/shell/zshnameddirrc"
 
 # Basic auto/tab complete:
@@ -53,6 +62,23 @@ bindkey -M menuselect 'l' vi-forward-char
 bindkey -M menuselect 'j' vi-down-line-or-history
 bindkey -v '^?' backward-delete-char
 
+###
+# Change cursor shape for different vi modes.
+# function zle-keymap-select () {
+#     case $KEYMAP in
+#         vicmd) echo -ne '\e[1 q';;      # block
+#         viins|main) echo -ne '\e[5 q';; # beam
+#     esac
+# }
+# zle -N zle-keymap-select
+# zle-line-init() {
+#     zle -K viins # initiate `vi insert` as keymap (can be removed if `bindkey -V` has been set elsewhere)
+#     echo -ne "\e[5 q"
+# }
+# zle -N zle-line-init
+# echo -ne '\e[5 q' # Use beam shape cursor on startup.
+# preexec() { echo -ne '\e[5 q' ;} # Use beam shape cursor for each new prompt.
+###
 
 # Use lf to switch directories and bind it to ctrl-o
 lfcd () {
@@ -83,10 +109,12 @@ bindkey -s '^[d' ' $priv_esc !!\n'
 bindkey -s '^[i' ' sxiv '
 bindkey -s '^[p' ' mpv '
 
+
+
 bindkey -s '^[1' ' cd ~/hoi4/modifications-2/ ; clear ; ls \n'
-bindkey -s '^[2' ' cd ~/udemy/git ; clear ; ls \n'
-bindkey -s '^[3' ' cd ~/suckless/dwm/ ; $editor config.h \n'
-bindkey -s '^[4' ' cd ~/git_repos ; clear; \n'
+bindkey -s '^[2' ' cd ~/udemy/node/section_6/ ; clear ; ls \n'
+bindkey -s '^[9' ' cd ~/suckless/dwm/ ; $editor config.h \n'
+bindkey -s '^[3' ' cd ~/git_repos ; clear; \n'
 bindkey -s '^[w' ' clear ; curl wttr.in \n'
 bindkey -s '^[r' ' $editor ~/.config/zsh/.zshrc \n'
 
@@ -96,21 +124,36 @@ bindkey '^[[P' delete-char
 autoload edit-command-line; zle -N edit-command-line
 bindkey '^e' edit-command-line
 
+# Load syntax highlighting; should be last.
+ # source /usr/share/zsh/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh 2>/dev/null
+ # source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.plugin.zsh 2>/dev/null
+
 #PLUGINS
 source ~/.config/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.plugin.zsh 2>/dev/null
 source ~/.config/zsh/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh 2>/dev/null
 source ~/.config/zsh/plugins/dirhistory/dirhistory.plugin.zsh 2>/dev/null
+#source ~/.config/zsh/plugins/copydir/copydir.plugin.zsh 2>/dev/null
 source ~/.config/zsh/plugins/jsontools/jsontools.plugin.zsh 2>/dev/null
 
 
 
 
+setopt NO_NOMATCH
+export COLORTERM=truecolor
+setopt HIST_IGNORE_SPACE
+
+fpath=("$HOME/.config/zsh/prompts" "$fpath[@]")
+source $HOME/.config/zsh/spaceship.zsh
 
 ##########################################ALIASES######################################################
 
 #Alias Section
-if [ -f ~/.config/zsh/.zsh_aliases ]; then
-    . ~/.config/zsh/.zsh_aliases
+#if [ -f ~/.config/zsh/.zsh_aliases ]; then
+#    . ~/.config/zsh/.zsh_aliases
+#fi
+
+if [ -f ~/.config/zsh/alias.zsh ]; then
+    . ~/.config/zsh/alias.zsh
 fi
 
 alias ls='ls --color=auto'
@@ -130,68 +173,20 @@ alias ll='ls -alF'
 alias la='ls -A'
 alias l='ls -CF'
 
-
-alias cl="clear"
-
-#BASH IMPORT
-
-
-#Alias Variables
-editor=vim
-browser=qutebrowser
-priv_esc=doas
-sysmon=btop
-ytdl="noglob yt-dlp"
-ytdlformat="22"
-gui_file_manager=pcmanfm
-tui_file_manager=lf
-
-
-#noglob fixes
-alias mpv="noglob mpv"
-alias links="noglob links"
-alias elinks="noglob elinks"
-alias wget="noglob wget"
-alias curl="noglob curl"
-  
-export EDITOR=$editor
-export BROWSER=$browser
-  
-
-###Misc Aliases###
-alias sudo="$priv_esc"
-alias doas="$priv_esc"
-alias vi="$editor"
-
 alias ls="ls -trAsh --color=auto"
-alias ll="ls -trAshl"
-alias mv="mv -vi"
-alias cp="cp -rvia"
-alias sl="echo 'TYPO ALERT TYPE LS!'"
-alias py="python3"
-alias cl="clear"
-alias mmpv="mpv --no-video"
-alias br="$editor ~/.config/zsh/.zshrc"
-alias bh="$editor ~/.config/zsh/history"
-alias sv="$priv_esc $editor"
-alias dv="$priv_esc $editor"
-alias pg="ping google.com"
-alias un="unlink"
-alias his="cat ~/.config/zsh/history"
 
-#Lynx Aliases
-alias lynx="lynx -useragent='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_0) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.79 Safari/537.1'"
-alias lx="lynx -useragent='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_0) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.79 Safari/537.1'"
+##########################################END#OF#ALIASES###############################################
 
-#GIT ALIASES
-alias g="git clone"
-alias gtl="git log"
-alias gtc="git commit -m"
-alias gta="git add"
-alias gts="git status"
-alias gtp="git push"
 
-setopt NO_NOMATCH
+
+#alias config='/usr/bin/git --git-dir=$HOME/.dotfiles.git/ --work-tree=$HOME'
+
+
+#export PATH=/home/michael/.local/bin:/home/michael/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/bin:/home/michael/.local/share/flatpak/exports/bin:/usr/lib/jvm/default/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl
+
+#setopt no_bare_glob_qual
 #set -o noglob
-export COLORTERM=truecolor
-setopt HIST_IGNORE_SPACE
+
+#eval "$(starship init zsh)"
+
+#pfetch
